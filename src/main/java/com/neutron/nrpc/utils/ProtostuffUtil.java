@@ -28,7 +28,7 @@ public class ProtostuffUtil {
     public static <T> byte[] serialize(T object) {
         Class<T> clazz = (Class<T>) object.getClass();
         Schema<T> schema = getSchema(clazz);
-        byte[] data = null;
+        byte[] data;
         try {
             data = ProtostuffIOUtil.toByteArray(object, schema, buffer);
         } finally {
@@ -51,12 +51,18 @@ public class ProtostuffUtil {
         return object;
     }
 
+    /**
+     * 根据类对象从缓存中获取schema
+     * @param clazz 类对象
+     * @return 该类对象对应的schema
+     * @param <T> 泛型
+     */
     private static <T> Schema<T> getSchema(Class<T> clazz) {
         Schema<T> schema = (Schema<T>) schemaCache.get(clazz);
         if (schema == null) {
             schema = RuntimeSchema.getSchema(clazz);
-            if (schema == null) {
-                schemaCache.put(clazz, null);
+            if (schema != null) {
+                schemaCache.put(clazz, schema);
             }
         }
         return schema;

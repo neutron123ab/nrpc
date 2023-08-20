@@ -2,6 +2,8 @@ package com.neutron.nrpc.transport.client;
 
 import com.neutron.nrpc.common.dto.RpcRequest;
 import com.neutron.nrpc.transport.RpcRequestTransport;
+import com.neutron.nrpc.transport.codec.RpcMessageDecoder;
+import com.neutron.nrpc.transport.codec.RpcMessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -42,6 +44,8 @@ public class NRpcClient implements RpcRequestTransport {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         //设置心跳
                         pipeline.addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS));
+                        pipeline.addLast(new RpcMessageEncoder());
+                        pipeline.addLast(new RpcMessageDecoder());
                     }
                 });
 

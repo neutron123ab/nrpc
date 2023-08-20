@@ -1,6 +1,9 @@
 package com.neutron.nrpc.transport.server;
 
-import com.neutron.nrpc.config.ServerPortConfig;
+import com.neutron.nrpc.config.NRpcPortConfig;
+import com.neutron.nrpc.transport.codec.RpcMessageDecoder;
+import com.neutron.nrpc.transport.codec.RpcMessageEncoder;
+import com.neutron.nrpc.transport.server.handler.RpcServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -26,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class NRpcServer  {
 
     @Resource
-    private ServerPortConfig serverPortConfig;
+    private NRpcPortConfig nRpcPortConfig;
 
     @SneakyThrows
     public void start() {
@@ -49,10 +52,14 @@ public class NRpcServer  {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));
+                            pipeline.addLast(new RpcMessageEncoder());
+                            pipeline.addLast(new RpcMessageDecoder());
+                            pipeline.addLast(new RpcServerHandler());
                         }
                     });
             //绑定端口
-            ChannelFuture channelFuture = serverBootstrap.bind(host, serverPortConfig.getPort()).sync();
+            ChannelFuture channelFuture = serverBootstrap.bind(host, nRpcPortConfig.getPort()).sync();
+            log.info("netty服务端启动，端口为：{}", nRpcPortConfig.getPort());
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

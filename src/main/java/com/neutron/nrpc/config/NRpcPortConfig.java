@@ -17,17 +17,17 @@ import org.springframework.context.annotation.Configuration;
 @NoArgsConstructor
 @ComponentScan
 @Configuration
-@ConfigurationProperties("server")
-public class ServerPortConfig {
+@ConfigurationProperties("nrpc")
+public class NRpcPortConfig {
 
     /**
-     * 服务端口号, 默认为8080
+     * 服务端口号, 默认为0，即用户不指定端口时会让netty自动选择一个可用端口
      */
-    private Integer port = 8080;
+    private Integer port = 0;
 
     @Bean
-    public ServerPortConfig serverPortConfig() {
-        return new ServerPortConfig(port);
+    public NRpcPortConfig serverPortConfig() {
+        return new NRpcPortConfig(port);
     }
 
 }

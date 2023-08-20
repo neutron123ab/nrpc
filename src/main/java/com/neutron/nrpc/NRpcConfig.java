@@ -1,7 +1,7 @@
 package com.neutron.nrpc;
 
+import com.neutron.nrpc.config.NRpcPortConfig;
 import com.neutron.nrpc.config.NRpcRegisterConfig;
-import com.neutron.nrpc.config.ServerPortConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration;
  * @date 2023/8/9 0:52
  */
 @Configuration
-@EnableConfigurationProperties({NRpcRegisterConfig.class, ServerPortConfig.class})
+@EnableConfigurationProperties({NRpcRegisterConfig.class, NRpcPortConfig.class})
 public class NRpcConfig {
 }

@@ -47,5 +47,9 @@ public class RpcRequest {
      * 群组
      */
     private String group;
+    
+    public String getRpcServiceName() {
+        return this.getInterfaceName() + this.getGroup() + this.getVersion();
+    }
 
 }

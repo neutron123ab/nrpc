@@ -1,22 +1,23 @@
 package com.neutron.nrpc.transport.client;
 
 import com.neutron.nrpc.common.dto.RpcRequest;
+import com.neutron.nrpc.common.dto.RpcResponse;
 import com.neutron.nrpc.transport.RpcRequestTransport;
 import com.neutron.nrpc.transport.codec.RpcMessageDecoder;
 import com.neutron.nrpc.transport.codec.RpcMessageEncoder;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,9 +51,23 @@ public class NRpcClient implements RpcRequestTransport {
                 });
 
     }
+    
+    @SneakyThrows
+    public Channel doConnect(InetSocketAddress inetSocketAddress) {
+        CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
+        bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                completableFuture.complete(future.channel());
+            } else {
+                throw new IllegalStateException();
+            }
+        });
+        return completableFuture.get();
+    }
 
     @Override
     public Object sendRpcRequest(RpcRequest nRpcRequest) {
+        CompletableFuture<RpcResponse<Object>> resultFuture = new CompletableFuture<>();
         return null;
     }
 }

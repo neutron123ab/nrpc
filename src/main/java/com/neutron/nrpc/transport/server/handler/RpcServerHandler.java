@@ -6,6 +6,8 @@ import com.neutron.nrpc.common.dto.RpcRequest;
 import com.neutron.nrpc.common.dto.RpcResponse;
 import com.neutron.nrpc.common.enums.CompressTypeEnum;
 import com.neutron.nrpc.common.enums.SerializationTypeEnum;
+import com.neutron.nrpc.common.factory.SingletonFactory;
+import com.neutron.nrpc.transport.handler.RpcRequestHandler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -20,6 +22,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RpcServerHandler extends ChannelInboundHandlerAdapter {
+    
+    private final RpcRequestHandler rpcRequestHandler;
+    
+    public RpcServerHandler() {
+        this.rpcRequestHandler = SingletonFactory.getSingletonInstance(RpcRequestHandler.class);
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -38,8 +46,7 @@ public class RpcServerHandler extends ChannelInboundHandlerAdapter {
                 } else {
                     //服务端只能收到心跳和请求类型的数据包，所以此处只能为请求类型
                     RpcRequest rpcRequest = (RpcRequest) rpcMessage.getData();
-                    // TODO 调用目标方法
-                    Object result = null;
+                    Object result = rpcRequestHandler.handle(rpcRequest);
                     log.info("服务端调用目标方法结果为：{}", result);
                     rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
                     //判断目标通道是否可写

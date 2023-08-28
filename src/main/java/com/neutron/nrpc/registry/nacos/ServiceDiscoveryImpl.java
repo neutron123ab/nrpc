@@ -7,6 +7,8 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.neutron.nrpc.common.dto.RpcRequest;
 import com.neutron.nrpc.config.NRpcRegisterConfig;
 import com.neutron.nrpc.registry.ServiceDiscovery;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.net.InetSocketAddress;
@@ -19,6 +21,7 @@ import java.util.Properties;
  * @author zzs
  * @date 2023/8/28 1:04
  */
+@Component
 public class ServiceDiscoveryImpl implements ServiceDiscovery {
     
     @Resource
